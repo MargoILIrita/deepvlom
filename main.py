@@ -1,6 +1,7 @@
 import docx
 import subprocess
 import collections
+import sys
 
 def getText(filename):
     doc = docx.Document('docx/' + filename + '.docx')
@@ -37,6 +38,14 @@ def tf(filename):
 
 
 if __name__ == '__main__':
-    print(tf('first'))
+    args = 'mystem/mystem.exe -n -w -l -d  txt/first.txt'
+    with subprocess.call(args) as pse:
+        text = []
+        for line in pse:
+            if '??' not in line:
+                text.append(line.replace('\n', ''))
+        print( compute_tf(text))
+
+
 
 
