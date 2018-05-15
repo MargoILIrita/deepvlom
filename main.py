@@ -1,9 +1,7 @@
 import docx
 import subprocess
 import collections
-import sys
 
-#получение текста из docx
 def getText(filename):
     doc = docx.Document('docx/' + filename + '.docx')
     fullText = []
@@ -12,19 +10,15 @@ def getText(filename):
     return '\n'.join(fullText)
 
 
-#получение файла txt
 def converttotxt(filename):
     f = open('txt/' + filename + '.txt', 'w', encoding='utf-8')
     f.write(getText(filename))
     f.close()
 
-
-#запуск mystem плучение лемм
 def mystem(filename):
     converttotxt(filename)
     args = 'mystem/mystem.exe -n -w -l -d  txt/' + filename + '.txt results/mystem/' + filename + '.txt'
     subprocess.call(args)
-
 
 def compute_tf(text):
     tf_text = collections.Counter(text)
@@ -33,15 +27,16 @@ def compute_tf(text):
     return tf_text
 
 
+def tf(filename):
+    f = open('results/mystem/' + filename + '.txt', 'r', encoding='utf-8')
+    text = []
+    for line in f:
+        if '??' not in line:
+            text.append(line.replace('\n', ''))
+    return compute_tf(text)
+
+
 if __name__ == '__main__':
-    args = 'mystem/mystem.exe -n -w -l -d  txt/first.txt'
-    with subprocess.call(args) as pse:
-        text = []
-        for line in pse:
-            if line.find("??") != -1:
-                text.append(line.replace('\n', ''))
-        print(compute_tf(text))
-
-
+    print(tf('first'))
 
 
