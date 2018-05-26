@@ -11,11 +11,13 @@ from nltk.corpus import stopwords
 
 
 
-def get_files_name():
-    directory = 'docx'
+def get_files_name(directory):
     files = []
     for word in os.listdir(directory):
-        files.append(word.replace('.docx', ''))
+        if '.docx' in word:
+            files.append(word.replace('.docx', ''))
+        elif '.odt' in word:
+            files.append(word.replace('.odt', ''))
     return files
 
 
@@ -66,7 +68,8 @@ def compute(X_test, Y_test, X_predict, classifier):
     return pred
 
 if __name__ == '__main__':
-    file_names = get_files_name()
+    file_names = get_files_name('docx')
+    file_names.extend(get_files_name('odt'))
     docs = TF_IDF.compute_tf_idf(preparing_doc(file_names))
     words = prepare_word_set(docs)
     X_test = make_matrix([docs[0], docs[1], docs[2], docs[3], docs[4],
@@ -77,7 +80,7 @@ if __name__ == '__main__':
 
 
     grade.counF(file_names,
-                compute(X_test,Y_test, X_predict,KNeighborsClassifier(n_neighbors=4, weights="distance")),
+                compute(X_test,Y_test, X_predict, KNeighborsClassifier(n_neighbors=4, weights="distance")),
                 "К ближайших соседей")
     grade.counF(file_names,
                 compute(X_test, Y_test, X_predict, NearestCentroid()),
