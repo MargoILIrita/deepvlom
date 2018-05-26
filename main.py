@@ -1,27 +1,11 @@
 import math
 import os
-import docx
-import subprocess
 import collections
 
-def getText(filename):
-    doc = docx.Document('docx/' + filename + '.docx')
-    fullText = []
-    for para in doc.paragraphs:
-        fullText.append(para.text)
-    return '\n'.join(fullText)
-
-
-def converttotxt(filename):
-    f = open('txt/' + filename + '.txt', 'w', encoding='utf-8')
-    f.write(getText(filename))
-    f.close()
-
-def mystem(filename):
-    converttotxt(filename)
-    args = 'mystem/mystem.exe -n -w -l -d  txt/' + filename + '.txt results/mystem/' + filename + '.txt'
-    subprocess.call(args)
-    print('finish mystem ' + filename)
+from sklearn.neighbors import KNeighborsClassifier
+import nltk
+from nltk.corpus import stopwords
+import numpy as np
 
 def compute_tf(text):
     tf_text = collections.Counter(text)
@@ -66,17 +50,44 @@ def get_files_name():
 def preparing_doc(files):
     list_documents = []
     for name in files:
-        mystem(name)
         list_documents.append(normilizer(name))
     print('finish preparing doc')
     return list_documents
 
 
-if __name__ == '__main__':
-    corpus = preparing_doc(get_files_name())
+def print_corpus(corpus):
     f = open('final.txt', 'w', encoding='utf-8')
     for t in compute_tf_idf(corpus):
         for key in t:
             f.write('{0} = {1}\n'.format(key, t[key]))
         f.write('\nNext doc\n')
     f.close()
+
+def prepare_word_set(docs):
+    words = []
+    for dictionary in docs:
+        words.extend(dictionary)
+    stop_words = stopwords.words('russian')
+    stop_words.extend(['что', 'это', 'так', 'вот', 'быть', 'как', 'в', '—', 'к', 'на'])
+    return [i for i in words if ( i not in stop_words )]
+
+
+def make_matrix(docs, words):
+    X = np.zeros((len(docs), len(words)))
+    for d in docs:
+        for w in words:
+            try:
+                X[docs.index(d), words.index(w)] = d[w]
+            except:
+                X[docs.index(d), words.index(w)] = 0
+    return X
+
+
+if __name__ == '__main__':
+    docs = compute_tf_idf(preparing_doc(get_files_name()))
+    clf = KNeighborsClassifier(n_neighbors=3,weights="distance")
+    words = prepare_word_set(docs)
+    X_test = make_matrix([docs[0], docs[1], docs[3], docs[5]], words)
+    Y_test = ['SPEC', 'SPEC', 'PROT', 'DOG']
+    clf.fit(X_test, Y_test)
+    print(clf.predict(make_matrix(docs, words)))
