@@ -21,6 +21,7 @@ def mystem(filename):
     converttotxt(filename)
     args = 'mystem/mystem.exe -n -w -l -d  txt/' + filename + '.txt results/mystem/' + filename + '.txt'
     subprocess.call(args)
+    print('finish mystem ' + filename)
 
 def compute_tf(text):
     tf_text = collections.Counter(text)
@@ -30,12 +31,12 @@ def compute_tf(text):
 
 
 def normilizer(filename):
-    mystem(filename)
     f = open('results/mystem/' + filename + '.txt', 'r', encoding='utf-8')
     text = []
     for line in f:
         if '??' not in line:
             text.append(line.replace('\n', ''))
+    print('finish normilizer ' + filename)
     return text
 
 
@@ -51,19 +52,31 @@ def compute_tf_idf(corpus):
         for word in computed_tf:
             tf_idf_dictionary[word] = computed_tf[word] * compute_idf(word, corpus)
         documents_list.append(tf_idf_dictionary)
+    print('finish compute_tf_idf')
     return documents_list
 
-
-def preparing_doc():
+def get_files_name():
     directory = 'docx'
     files = []
     for word in os.listdir(directory):
         files.append(word.replace('.docx', ''))
+    return files
+
+
+def preparing_doc(files):
     list_documents = []
     for name in files:
+        mystem(name)
         list_documents.append(normilizer(name))
+    print('finish preparing doc')
     return list_documents
 
 
 if __name__ == '__main__':
-    print(preparing_doc())
+    corpus = preparing_doc(get_files_name())
+    f = open('final.txt', 'w', encoding='utf-8')
+    for t in compute_tf_idf(corpus):
+        for key in t:
+            f.write('{0} = {1}\n'.format(key, t[key]))
+        f.write('\nNext doc\n')
+    f.close()
