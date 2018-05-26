@@ -1,9 +1,15 @@
 import os
-from sklearn.neighbors import KNeighborsClassifier
-from nltk.corpus import stopwords
 import numpy as np
+
 import TF_IDF
 import grade
+
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors import NearestCentroid
+from sklearn import svm
+from nltk.corpus import stopwords
+
+
 
 def get_files_name():
     directory = 'docx'
@@ -54,12 +60,10 @@ def make_matrix(docs, words):
     return X
 
 
-def compute_KNBHD(X_test, Y_test, X_predict):
-    clf = KNeighborsClassifier(n_neighbors=4, weights="distance")
-    clf.fit(X_test, Y_test)
-    pred = clf.predict(X_predict)
+def compute(X_test, Y_test, X_predict, classifier):
+    classifier.fit(X_test, Y_test)
+    pred = classifier.predict(X_predict)
     return pred
-
 
 if __name__ == '__main__':
     file_names = get_files_name()
@@ -70,7 +74,17 @@ if __name__ == '__main__':
     Y_test = ['SPEC','ANK', 'DOG', 'DOG', 'DOG', 'SPEC', 'SPEC', 'TREB']
     X_predict = make_matrix(docs, words)
 
-    grade.counF(file_names,compute_KNBHD(X_test,Y_test, X_predict),"К ближайших соседей")
+
+
+    grade.counF(file_names,
+                compute(X_test,Y_test, X_predict,KNeighborsClassifier(n_neighbors=4, weights="distance")),
+                "К ближайших соседей")
+    grade.counF(file_names,
+                compute(X_test, Y_test, X_predict, NearestCentroid()),
+                "Метод Роше")
+    grade.counF(file_names,
+                compute(X_test, Y_test, X_predict, svm.SVC()),
+                "Метод вспомогательных векторов")
 
 
 

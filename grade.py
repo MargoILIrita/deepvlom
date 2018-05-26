@@ -25,7 +25,11 @@ def counF(file_names, pred, namemethod):
         print('Классифицированный {0}'.format(set_clf))
         common_set = set_right.intersection(set_clf)
         print('Пересечение {0}'.format(common_set))
-        r = len(common_set)/len(set_right)
-        p = len(common_set)/len(set_clf)
-        f = 2*p*r/(p+r)
-        print('F мера для {0} = {1}\n'.format(label, f))
+        try:
+            r = len(common_set)/len(set_right)
+            p = len(common_set)/len(set_clf)
+            f = 2*p*r/(p+r)
+            print('F мера для {0} = {1}\n'.format(label, f))
+        except ZeroDivisionError:
+            print("Метрика не распознана")
+
