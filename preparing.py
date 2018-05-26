@@ -11,19 +11,27 @@ def getText(filename):
     return '\n'.join(fullText)
 
 
-def converttotxt(filename):
-    f = open('txt/' + filename + '.txt', 'w', encoding='utf-8')
-    f.write(getText(filename))
-    f.close()
-
-def mystem(filename):
-    converttotxt(filename)
-    args = 'mystem/mystem.exe -n -w -l -d  txt/' + filename + '.txt results/mystem/' + filename + '.txt'
-    subprocess.call(args)
-    print('finish mystem ' + filename)
+def write_bytes_to_file(bytes, f):
+    line = ""
+    for ch in bytes:
+        if ch == '\n':
+            if '??' not in line:
+                f.write(line)
+            line = ''
+        else:
+            line += ch
 
 
 if __name__ == '__main__':
     for i in main.get_files_name():
-        mystem(i)
-    print("Finished preparing")
+        args = 'mystem/mystem.exe -n -w -l -d'
+        proc = subprocess.Popen(
+            args,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
+        res = proc.communicate(input=getText(i).encode())
+        f = open('results/mystem/' + i + '.txt', 'w', encoding='utf-8')
+        write_bytes_to_file(res[0].decode(), f)
+        f.close()
+        print(i + ' ready')
