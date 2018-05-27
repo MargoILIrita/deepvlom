@@ -1,8 +1,0 @@
-encoding "utf8";     
-import "base.proto"; 
-import "articles_base.proto";  
-                               
-TAuxDicArticle "наша_первая_грамматика"
-{
-    key = { "tomita:tomitaGrammar.cxx" type=CUSTOM }
-}

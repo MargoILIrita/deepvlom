@@ -2,10 +2,11 @@ import re
 
 import docx
 import subprocess
+from multiprocessing import Process
 
 import ezodf
 
-import main
+import zhenya
 
 
 def getText(filename):
@@ -35,15 +36,23 @@ def write_bytes_to_file(bytes, f):
             line += ch
 
 
+def write_a_file(f, text):
+    f.write(text)
+    f.close()
+
+
 def compute(directory, foo):
-    for i in main.get_files_name(directory):
+    for i in zhenya.get_files_name(directory):
         args = 'mystem/mystem.exe -n -w -l -d'
         proc = subprocess.Popen(
             args,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
-        res = proc.communicate(input=foo(i).encode())
+        text = foo(i)
+        ft = open('txt/'+ i + '.txt', 'w', encoding='utf-8')
+        write_a_file(ft, text)
+        res = proc.communicate(input=text.encode())
         f = open('results/mystem/' + i + '.txt', 'w', encoding='utf-8')
         write_bytes_to_file(res[0].decode(), f)
         f.close()
