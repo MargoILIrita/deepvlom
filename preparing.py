@@ -1,8 +1,5 @@
-import re
-
 import docx
 import subprocess
-from multiprocessing import Process
 
 import ezodf
 

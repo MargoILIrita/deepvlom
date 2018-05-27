@@ -1,8 +1,7 @@
 import os
 import numpy as np
 
-import TF_IDF
-import grade
+from clsf import grade, TF_IDF
 
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neighbors import NearestCentroid
@@ -18,6 +17,8 @@ def get_files_name(directory):
             files.append(word.replace('.docx', ''))
         elif '.odt' in word:
             files.append(word.replace('.odt', ''))
+        elif '.txt' in word:
+            files.append(word.replace('.txt', ''))
     return files
 
 

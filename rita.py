@@ -1,7 +1,7 @@
 import subprocess
 import xml.etree.cElementTree as ET
 
-import marks
+from ie import marks
 
 
 def readXML(fulldoc, listoffacts):
@@ -35,10 +35,11 @@ if __name__ == '__main__':
         )
     res = proc.communicate()
     xml = res[0].decode()
+    print("finish tomita work")
     tree = ET.XML(xml)
     doc = tree.iter("document")
     tomita_names = readXML(doc, ["Names", "Name"])
-    marks.countF(tomita_names,"Томита-парсер")
+    marks.countF(tomita_names, "Томита-парсер")
     for c in tomita_names:
         print("{0} {1}".format(c, marks.right_names[tomita_names.index(c)]))
 

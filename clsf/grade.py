@@ -27,7 +27,9 @@ def counF(file_names, pred, namemethod):
         print('Пересечение {0}'.format(common_set))
         try:
             r = len(common_set)/len(set_right)
+            print("Полнота {0}".format(r))
             p = len(common_set)/len(set_clf)
+            print("Точность {0}".format(p))
             f = 2*p*r/(p+r)
             print('F мера для {0} = {1}\n'.format(label, f))
         except ZeroDivisionError:
