@@ -1,38 +1,50 @@
 import subprocess
 import xml.etree.cElementTree as ET
 
+import marks
 
-args = 'tomita/tomitaparser.exe tomita/config.proto'
-proc = subprocess.Popen(
+
+def readXML(fulldoc, listoffacts):
+    tomita_names = []
+    while True:
+        try:
+            element = next(fulldoc)
+            filename = element.attrib['url'].replace("\\", '')
+            facts = element.iter(listoffacts[0])
+            while True:
+                try:
+                    tag = next(facts)
+                    names = tag.iter(listoffacts[1])
+                    while True:
+                        try:
+                            tomita_names.append(filename.lower() + " " + next(names).attrib['val'].lower())
+                        except StopIteration:
+                            break
+                except StopIteration:
+                    break
+        except StopIteration:
+            break
+    return tomita_names
+
+if __name__ == '__main__':
+    args = 'tomita/tomitaparser.exe tomita/config.proto'
+    proc = subprocess.Popen(
             args,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
-res = proc.communicate()
-xml = res[0].decode()
-tree = ET.XML(xml)
-doc = tree.iter("document")
-tomita_names = {}
-while True:
-    try:
-        element = next(doc)
-        filename = element.attrib['url'].replace("\\", '')
-        current = []
-        facts = element.iter("Names")
-        while True:
-            try:
-                tag = next(facts)
-                names = tag.iter("Name")
-                while True:
-                    try:
-                        current.append(next(names).attrib['val'])
-                    except StopIteration:
-                        break
-            except StopIteration:
-                break
-        tomita_names[filename] = current
-    except StopIteration:
-        break
+    res = proc.communicate()
+    xml = res[0].decode()
+    tree = ET.XML(xml)
+    doc = tree.iter("document")
+    tomita_names = readXML(doc, ["Names", "Name"])
+    marks.countF(tomita_names,"Томита-парсер")
+    for c in tomita_names:
+        print("{0} {1}".format(c, marks.right_names[tomita_names.index(c)]))
+
+
+
+
 
 
 

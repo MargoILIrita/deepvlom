@@ -1,13 +1,10 @@
 encoding "utf8";
 TTextMinerConfig {
-  Dictionary = "tomita/myDict.gzt";
-  PrettyOutput = "tomita/output.html";
+  Dictionary = "myDict.gzt";
+  PrettyOutput = "output.html";
   Input = {
-    Dir = 'txt'
+    File = 'd4.txt'
   }
-  //Output = {
-    //File = 'tomita/output.xml'
- // }
   Facts = [
     { Name = "Names" }
 ]
