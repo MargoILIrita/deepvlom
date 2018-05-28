@@ -44,14 +44,15 @@ def num_wor(s):
 def word_features(trig):
     return {'first_lett_up': 0 if (trig[0][0][0].isupper() ==
                              trig[1][0][0].isupper() == trig[2][0][0].isupper() == True) else 1,
-            'is_all_noun': 0 if (trig[0][1] == trig[1][1] == trig[2][1] == 'S') else 1,
+            'first': trig[0][0],
+            'second': trig[1][0],
+            'third': trig[2][0],
             'isUpper_1': 0 if trig[0][0][0].isupper() else 1,
             'isUpper_2': 0 if trig[1][0][0].isupper() else 1,
             'isUpper_3': 0 if trig[2][0][0].isupper() else 1,
             'isLower_1': 0 if trig[0][0][-1].islower() else 1,
             'isLower_2': 0 if trig[1][0][-1].islower() else 1,
             'isLower_3': 0 if trig[2][0][-1].islower() else 1,
-            'isStr' : 0 if trig[0][0].isalpha() else 1,
             'word_w1':num_wor(trig[0][1]),
             'word_w2': num_wor(trig[1][1]),
             'word_w3': num_wor(trig[2][1]),
